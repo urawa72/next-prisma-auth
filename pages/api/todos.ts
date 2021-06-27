@@ -17,7 +17,7 @@ const handler = async (
 
   if (!session) return res.status(401).end('Please log in to view');
 
-  const userId = session.id;
+  const userId = session.id as number;
 
   if (req.method === 'GET') {
     const todos = await prisma.todo.findMany({

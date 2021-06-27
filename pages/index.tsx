@@ -1,7 +1,11 @@
-import { signIn, signOut, useSession } from 'next-auth/client';
+import React from 'react';
 
-export default function Home() {
-  const [session, loading] = useSession();
+import { signIn, signOut, useSession } from 'next-auth/client';
+import TodoList from '../components/TodoList';
+import NewTodoForm from '../components/NewTodoForm';
+
+const Home: React.VFC = () => {
+  const [session] = useSession();
 
   return (
     <>
@@ -17,8 +21,12 @@ export default function Home() {
           Sined in as email: {session?.user?.email}
           <br />
           <button onClick={() => signOut()}>Sign out</button>
+          <NewTodoForm />
+          <TodoList />
         </>
       )}
     </>
   );
-}
+};
+
+export default Home;
