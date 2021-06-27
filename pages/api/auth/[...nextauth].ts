@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import Providers from 'next-auth/providers';
 import Adapters from 'next-auth/adapters';
 import { PrismaClient } from '@prisma/client';
@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'production') {
   prisma = global.prisma;
 }
 
-const options = {
+const options: NextAuthOptions = {
   providers: [
     Providers.Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -23,6 +23,12 @@ const options = {
     }),
   ],
   adapter: Adapters.Prisma.Adapter({ prisma }),
+  callbacks: {
+    session: async (session, user) => {
+      session.id = user.id;
+      return Promise.resolve(session);
+    },
+  },
 };
 
 const auth = (
@@ -30,13 +36,3 @@ const auth = (
   res: NextApiResponse
 ): void | Promise<void> => NextAuth(req, res, options);
 export default auth;
-
-// export default NextAuth({
-//   providers: [
-//     Providers.Google({
-//       clientId: process.env.GOOGLE_CLIENT_ID,
-//       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//     }),
-//   ],
-//   adapter: Adapters.Prisma.Adapter({ prisma }),
-// });
